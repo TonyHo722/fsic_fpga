@@ -12,9 +12,11 @@ cd rtl/user/axilite_axis
 ./run_xsim
 ```
 ## run simulation in vivado 2022.2 for axilite_axis
+```
 Add Sources -> Add or create design sources ->  select files in REPO/rtl/user/axilite_axis/rtl/*
 Add Sources -> Add or create simulation sources ->  select files in REPO/rtl/user/axilite_axis/testbench/tc_axil_axis.sv and REPO/rtl/user/axilite_axis/testbench/top.sv
 Run Simulation
+```
 
 # eFabless ChipIgnite Schedule (2023/11) and Preparation
 [eFabless-chipIgnite slide](https://github.com/bol-edu/fsic_fpga/files/12040111/eFabless-chipIgnite.pptx)

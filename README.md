@@ -1,3 +1,17 @@
+# I fork this project from https://github.com/bol-edu/fsic_fpga for study systemverilog
+
+## git clone and goto fsic_fpga_systemverilog folder
+```
+git clone https://github.com/TonyHo722/fsic_fpga_systemverilog
+cd fsic_fpga_systemverilog
+```
+
+## run simulation in command line for axilite_axis
+```
+cd rtl/user/axilite_axis/testbench/tc01
+./run_xsim
+```
+
 # eFabless ChipIgnite Schedule (2023/11) and Preparation
 [eFabless-chipIgnite slide](https://github.com/bol-edu/fsic_fpga/files/12040111/eFabless-chipIgnite.pptx)
 

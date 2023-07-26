@@ -1,3 +1,0 @@
-xvlog -sv -i ../ tc_axil_axis.sv -f filelist
-xelab top -debug typical --snapshot axil_axis --timescale 1ns/1ns
-xsim axil_axis -R

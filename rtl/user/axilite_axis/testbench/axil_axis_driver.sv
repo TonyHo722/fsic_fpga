@@ -58,6 +58,7 @@ class axil_axis_driver;
 			while(1)begin
 				if(axil_wr_q.size() != 0)begin
 					wr_tr = axil_wr_q.pop_front();
+					$display($sformatf("[INFO] %6t LS write", $time()));
 					fork // write
 						begin // wr addr
 							@(posedge intf.axi_ls_aclk);
@@ -65,6 +66,7 @@ class axil_axis_driver;
 							intf.cc_aa_enable = 1;
 							intf.axi_ls_awaddr = wr_tr.wr_addr;
 							intf.axi_ls_awvalid = 1;
+							$display($sformatf("[INFO] %6t LS write wr_addr=%x", $time(), wr_tr.wr_addr));
 							
 							while(1)begin
 								@(posedge intf.axi_ls_aclk);
@@ -110,6 +112,7 @@ class axil_axis_driver;
 			while(1)begin
 				if(axil_rd_q.size() != 0)begin
 					rd_tr = axil_rd_q.pop_front();
+					$display($sformatf("[INFO] %6t LS read", $time()));
 					fork // read
 						begin // rd addr
 							@(posedge intf.axi_ls_aclk);
@@ -117,6 +120,7 @@ class axil_axis_driver;
 							intf.cc_aa_enable = 1;
 							intf.axi_ls_araddr = rd_tr.rd_addr;
 							intf.axi_ls_arvalid = 1;
+							$display($sformatf("[INFO] %6t LS read rd_addr=%x", $time(), rd_tr.rd_addr));
 							
 							while(1)begin
 								@(posedge intf.axi_ls_aclk);
@@ -184,6 +188,7 @@ class axil_axis_driver;
 			while(1)begin
 				if(axis_q.size() != 0)begin
 					axis_tr = axis_q.pop_front();
+					$display($sformatf("[INFO] %6t SS", $time()));
 					//fork: drive_packet
 					begin
 						for(int i=0; i<axis_tr.stream_size; i++)begin

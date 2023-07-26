@@ -180,11 +180,11 @@ class axil_axis_scenario;
 	virtual function void display(string prefix="");
 		$display($sformatf("\ntrans_id %6d ========%s", trans_id, prefix));
 
-		$display($sformatf("axi_trans_typ = %s", axi_trans_typ));
+		$display($sformatf("axi_trans_typ = %b", axi_trans_typ));
 		//$display($sformatf("axi_path_typ = %p", axi_path_typ));
-		$display($sformatf("axi_path_typ = %s", axi_path_typ));
+		$display($sformatf("axi_path_typ = %b", axi_path_typ));
 		//$display($sformatf("supp_addr = %p", supp_addr));
-		$display($sformatf("supp_addr = %s", supp_addr));
+		$display($sformatf("supp_addr = %b", supp_addr));
 		if(axi_trans_typ == TRANS_AXIL)begin
 			if(this.axi_op == AXI_WR)begin
 				$display($sformatf("wr_addr = %h", wr_addr));

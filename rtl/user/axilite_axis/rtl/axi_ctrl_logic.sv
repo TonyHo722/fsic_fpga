@@ -236,10 +236,10 @@ module axi_ctrl_logic(
 		fifo_ss_clear = 1'b0;
 
 		//if(axi_state == AXI_DECIDE_DEST || axi_state == AXI_SEND_BKEND)begin
-		if(axi_state != AXI_WAIT_DATA)begin
+//tony_debug		if(axi_state != AXI_WAIT_DATA)begin
 			//{fifo_out_tdata, fifo_out_tstrb, fifo_out_tkeep, fifo_out_tuser, fifo_out_tlast} = fifo_ss_data_out;
-			{fifo_out_tdata, fifo_out_tuser} = fifo_ss_data_out;
-		end
+//tony_debug			{fifo_out_tdata, fifo_out_tuser} = fifo_ss_data_out;
+//tony_debug		end
 
 		if(get_next_data_ss)begin // if tuser in SS is 1, AXI_WR need nex trans data
 			fifo_ss_rd_rdy = 1'b1;

@@ -1,0 +1,7 @@
+# xvlog -sv -i <testbench_folder> <testcase file> -f filelist
+# where filelist include filename for RTL and top
+
+xvlog -sv -i testbench/ testbench/tc_axil_axis.sv -f filelist
+xelab top -debug typical --snapshot axil_axis --timescale 1ns/1ns
+xsim axil_axis -R
+

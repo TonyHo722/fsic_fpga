@@ -1,0 +1,11 @@
+# RTL
+rtl/axilite_master.sv
+rtl/axilite_slave.sv
+rtl/axis_master.sv
+rtl/axis_slave.sv
+rtl/axi_ctrl_logic.sv
+rtl/axil_axis.sv
+
+# testbench
+testbench/top.sv
+

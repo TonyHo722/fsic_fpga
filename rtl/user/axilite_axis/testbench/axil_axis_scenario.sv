@@ -171,7 +171,7 @@ class axil_axis_scenario;
 	//	solve stream_size before no_rdy_cnt;
 	//}
 
-	extern constraint rdy;
+	//tony_debug extern constraint rdy;
 
 	function new();
 		//this.randomize();

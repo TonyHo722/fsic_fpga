@@ -100,13 +100,8 @@ module fsic_tb();
         @(is_txen_event);      
         $display($time, "=> Starting test...");
 
-        Fpga2Soc_CfgRead();
-        Fpga2Soc_CfgWrite();
-        FpgaLocal_CfgRead();
-        SocLocal_MbWrite();
-        FpgaLocal_MbWrite();
-        SocLa2DmaPath();
-        SocUp2DmaPath();
+	RUNFIR();
+
 
         #500us    
         $display($time, "=> End of the test...");                         
@@ -1064,6 +1059,253 @@ module fsic_tb();
             $display($time, "=> =======================================================================");
         end
     endtask
+    
+    integer    iterator;
+    integer    f_file, f_data;
+    reg [31:0] fir_data[0:599];
+ 
+    task RUNFIR;
+        begin
+            $display($time, "=> Starting RunFIR() test...");
+            $display($time, "=> =======================================================================");
+
+            f_file = $fopen("../../../../../fir_x.dat","r");
+            for(iterator=0; iterator<600; iterator=iterator+1) begin
+            	f_data = $fscanf(f_file,"%d", fir_data[iterator]);
+            end
+
+            fd = $fopen ("../../../../../updma_input.log", "w");
+            for (index = 0; index < 600; index=index+1) begin
+                slave_agent3.mem_model.backdoor_memory_write_4byte(addri+index*4, fir_data[index], 4'b1111);
+                $fdisplay(fd, "%08h", slave_agent3.mem_model.backdoor_memory_read_4byte(addri + index*4));
+            end
+            $fclose(fd);
+
+            f_file = $fopen("../../../../../fir_y.dat","r");
+            for(iterator=0; iterator<600; iterator=iterator+1) begin
+            	f_data = $fscanf(f_file,"%d", fir_data[iterator]);
+            end
+
+            fd = $fopen ("../../../../../updma_output_gold.log", "w");
+            for (index = 0; index < 600; index +=1) begin
+                slave_agent2.mem_model.backdoor_memory_write_4byte(addro+index*4, fir_data[index], 4'b1111);
+                $fdisplay(fd, "%08h", slave_agent2.mem_model.backdoor_memory_read_4byte(addro + index*4));
+            end
+            $fclose(fd);
+
+            //Setup userdma
+            $display($time, "=> FpgaLocal_Write: PL_UPDMA, s2m exit clear...");
+            offset = 32'h0000_0020;
+            data = 32'h0000_0000;
+            axil_cycles_gen(WriteCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            axil_cycles_gen(ReadCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            if(data == 32'h0000_0000) begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, PASS", offset, data);
+            end else begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, FAIL", offset, data);
+                ->> error_event;
+            end
+
+            $display($time, "=> FpgaLocal_Write: PL_UPDMA, s2m disable to clear...");
+            offset = 32'h0000_0030;
+            data = 32'h0000_0000;
+            axil_cycles_gen(WriteCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            axil_cycles_gen(ReadCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            if(data == 32'h0000_0000) begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, PASS", offset, data);
+            end else begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, FAIL", offset, data);
+                ->> error_event;
+            end
+
+            $display($time, "=> FpgaLocal_Write: PL_UPDMA, m2s exit clear...");
+            offset = 32'h0000_0078;
+            data = 32'h0000_0000;
+            axil_cycles_gen(WriteCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            axil_cycles_gen(ReadCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            if(data == 32'h0000_0000) begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, PASS", offset, data);
+            end else begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, FAIL", offset, data);
+                ->> error_event;
+            end
+
+            $display($time, "=> FpgaLocal_Write: PL_UPDMA, m2s disable to clear...");
+            offset = 32'h0000_0088;
+            data = 32'h0000_0000;
+            axil_cycles_gen(WriteCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            axil_cycles_gen(ReadCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            if(data == 32'h0000_0000) begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, PASS", offset, data);
+            end else begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, FAIL", offset, data);
+                ->> error_event;
+            end
+
+            $display($time, "=> FpgaLocal_Write: PL_UPDMA, s2m set buffer length...");
+            offset = 32'h0000_0028;
+            data = 32'h0000_0258;
+            axil_cycles_gen(WriteCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            axil_cycles_gen(ReadCyc, PL_UPDMA, offset, data, 1);
+            //#20us230400
+            if(data == 32'h0000_0258) begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, PASS", offset, data);
+            end else begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, FAIL", offset, data);
+                ->> error_event;
+            end
+
+            $display($time, "=> FpgaLocal_Write: PL_UPDMA, s2m set buffer low...");
+            offset = 32'h0000_0038;
+            data = 32'h4508_0000;
+            axil_cycles_gen(WriteCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            axil_cycles_gen(ReadCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            if(data == 32'h4508_0000) begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, PASS", offset, data);
+            end else begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, FAIL", offset, data);
+                ->> error_event;
+            end
+
+            $display($time, "=> FpgaLocal_Write: PL_UPDMA, s2m set buffer high...");
+            offset = 32'h0000_003C;
+            data = 32'h0000_0000;
+            axil_cycles_gen(WriteCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            axil_cycles_gen(ReadCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            if(data == 32'h0000_0000) begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, PASS", offset, data);
+            end else begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, FAIL", offset, data);
+                ->> error_event;
+            end
+
+            $display($time, "=> FpgaLocal_Write: PL_UPDMA, set image width...");
+            offset = 32'h0000_0054;
+            data = 32'd600;
+            axil_cycles_gen(WriteCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            axil_cycles_gen(ReadCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            if(data == 32'h0000_0258) begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, PASS", offset, data);
+            end else begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, FAIL", offset, data);
+                ->> error_event;
+            end
+
+            $display($time, "=> FpgaLocal_Write: PL_UPDMA, m2s set buffer low...");
+            offset = 32'h0000_005C;
+            data = 32'h4500_0000;
+            axil_cycles_gen(WriteCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            axil_cycles_gen(ReadCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            if(data == 32'h4500_0000) begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, PASS", offset, data);
+            end else begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, FAIL", offset, data);
+                ->> error_event;
+            end
+
+            $display($time, "=> FpgaLocal_Write: PL_UPDMA, m2s set buffer high...");
+            offset = 32'h0000_0060;
+            data = 32'h0000_0000;
+            axil_cycles_gen(WriteCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            axil_cycles_gen(ReadCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            if(data == 32'h0000_0000) begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, PASS", offset, data);
+            end else begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, FAIL", offset, data);
+                ->> error_event;
+            end
+
+            $display($time, "=> FpgaLocal_Write: PL_UPDMA, m2s set buffer length...");
+            offset = 32'h0000_0080;
+            data = 32'h0000_0258;
+            axil_cycles_gen(WriteCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            axil_cycles_gen(ReadCyc, PL_UPDMA, offset, data, 1);
+            //#20us
+            if(data == 32'h0000_0258) begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, PASS", offset, data);
+            end else begin
+                $display($time, "=> Fpga2Soc_Write PL_UPDMA offset %h = %h, FAIL", offset, data);
+                ->> error_event;
+            end
+
+            //Select FIR IP user project
+            $display($time, "=> Fpga2Soc_Write: SOC_CC");
+            offset = 0;
+            data = 32'h0000_0000;
+            axil_cycles_gen(WriteCyc, SOC_CC, offset, data, 1);
+            //#20us
+            axil_cycles_gen(ReadCyc, SOC_CC, offset, data, 1);
+            //#20us
+            if(data == 32'h0000_0000) begin
+                $display($time, "=> Fpga2Soc_Write SOC_CC offset %h = %h, PASS", offset, data);
+            end else begin
+                $display($time, "=> Fpga2Soc_Write SOC_CC offset %h = %h, FAIL", offset, data);
+                ->> error_event;
+            end
+
+            //Configure FIR IP
+            f_file = $fopen("../../../../../fir_tap.dat","r");
+            for(iterator=0; iterator<11; iterator=iterator+1) begin
+            	f_data = $fscanf(f_file,"%d", fir_data[iterator]);
+            end
+            
+            // send data length to SOC_UP
+            $display($time, "=> Fpga2Soc_Write: SOC_UP");	
+            offset = 28'h10;
+            data = 32'd600;
+            axil_cycles_gen(WriteCyc, SOC_UP, offset, data, 1);
+            
+            // send tap parameters to SOC_UP
+            for (iterator=0; iterator<11; iterator=iterator+1) begin
+            	$display($time, "=> Fpga2Soc_Write: SOC_UP");
+		offset = 28'h20 + iterator*4;
+		data = fir_data[iterator];
+		axil_cycles_gen(WriteCyc, SOC_UP, offset, data, 1);
+            end
+            
+            // ap_start for FIR
+            $display($time, "=> Fpga2Soc_Write: SOC_UP");	
+            offset = 28'h0;
+            data = 32'd1;
+            axil_cycles_gen(WriteCyc, SOC_UP, offset, data, 1);
+
+            // ap_start for PL_UPDMA
+            $display($time, "=> FpgaLocal_Write: PL_UPDMA, set ap_start...");
+            offset = 32'h0000_0000;
+            data = 32'h0000_0001;
+            axil_cycles_gen(WriteCyc, PL_UPDMA, offset, data, 1);
+
+            fork
+                CheckuserDMADone();
+            join_none
+
+            @(userdma_done);
+
+            $display($time, "=> End SocUp2DmaPath() test...");
+            $display($time, "=> =======================================================================");
+        end
+    endtask
+
 
     task CheckuserDMADone;
         begin

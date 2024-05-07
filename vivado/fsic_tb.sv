@@ -84,7 +84,7 @@ module fsic_tb();
           repeat (100000) @(posedge sys_clock);
           $display("%t MSG %m, +100000 cycles, finish_flag=%b,  repeat_cnt=%04d", $time, finish_flag, repeat_cnt);
         end  
-        while(finish_flag == 0 && repeat_cnt <= 1000 );
+        while(finish_flag == 0 && repeat_cnt <= 330 );
       end   
     `endif //SHOW_HEART_BEAT
 

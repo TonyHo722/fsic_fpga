@@ -68,6 +68,25 @@ module fsic_tb();
     design_1_axi_vip_2_0_slv_mem_t  slave_agent2;
     design_1_axi_vip_3_0_slv_mem_t  slave_agent3;
 
+  reg [31:0] repeat_cnt;
+  reg finish_flag;
+  initial begin
+    $timeformat (-9, 3, " ns", 13); 
+  //$dumpfile("top_bench.vcd");
+  //$dumpvars(0, top_bench);
+    finish_flag = 0; 
+    repeat_cnt = 0; 
+
+
+    do begin
+        repeat_cnt = repeat_cnt + 1; 
+        repeat (1000) @(posedge sys_clock);
+        $display("%t MSG %m, +1000 cycles, finish_flag=%b,  repeat_cnt=%04d", $time, finish_flag, repeat_cnt);
+    end  
+    while(finish_flag == 0 && repeat_cnt <= 1000000 );
+
+  end   
+
     initial begin    
         fork
             system_reset_t();

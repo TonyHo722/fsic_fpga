@@ -85,6 +85,7 @@ module fsic_tb();
           $display("%t MSG %m, +100000 cycles, finish_flag=%b,  repeat_cnt=%04d", $time, finish_flag, repeat_cnt);
         end  
         while(finish_flag == 0 && repeat_cnt <= 330 );
+        $finish;
       end   
     `endif //SHOW_HEART_BEAT
 

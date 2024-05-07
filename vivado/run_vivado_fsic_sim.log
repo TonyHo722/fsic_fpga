@@ -1253,7 +1253,6 @@ INFO: [VRFC 10-2263] Analyzing Verilog file "/ADATA2T/home/tonyho/workspace/test
 INFO: [VRFC 10-311] analyzing module SPRAM
 INFO: [VRFC 10-2263] Analyzing Verilog file "/ADATA2T/home/tonyho/workspace/test/fsic_fpga/vivado/vvd_srcs/caravel_soc/rtl/user/axis_switch/rtl/sw_caravel.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module AXIS_SW
-WARNING: [VRFC 10-3380] identifier 'is_as_tready_reg' is used before its declaration [/ADATA2T/home/tonyho/workspace/test/fsic_fpga/vivado/vvd_srcs/caravel_soc/rtl/user/axis_switch/rtl/sw_caravel.v:244]
 INFO: [VRFC 10-2263] Analyzing Verilog file "/ADATA2T/home/tonyho/workspace/test/fsic_fpga/vivado/vvd_srcs/caravel_soc/rtl/user/user_subsys/user_prj/user_prj0/rtl/user_prj0.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module USER_PRJ0
 INFO: [VRFC 10-2263] Analyzing Verilog file "/ADATA2T/home/tonyho/workspace/test/fsic_fpga/vivado/vvd_srcs/caravel_soc/rtl/user/user_subsys/user_prj/user_prj1/rtl/user_prj1.v" into library xil_defaultlib
@@ -2066,7 +2065,7 @@ Compiling module xil_defaultlib.design_1_wrapper
 Compiling module xil_defaultlib.fsic_tb
 Compiling module xil_defaultlib.glbl
 Built simulation snapshot fsic_tb_behav
-execute_script: Time (s): cpu = 00:01:10 ; elapsed = 00:00:17 . Memory (MB): peak = 3166.043 ; gain = 0.000 ; free physical = 8500 ; free virtual = 11432
+execute_script: Time (s): cpu = 00:01:10 ; elapsed = 00:00:17 . Memory (MB): peak = 3166.039 ; gain = 0.000 ; free physical = 7734 ; free virtual = 11424
 INFO: [USF-XSim-69] 'elaborate' step finished in '17' seconds
 INFO: [USF-XSim-4] XSim::Simulate design
 INFO: [USF-XSim-61] Executing 'SIMULATE' step in '/ADATA2T/home/tonyho/workspace/test/fsic_fpga/vivado/vvd_caravel_fpga_sim/vvd_caravel_fpga_sim.sim/sim_1/behav/xsim'
@@ -2169,7 +2168,7 @@ Block Memory Generator module fsic_tb.DUT.design_1_i.blk_mem_gen_0.inst.\native_
                  200=> sys_rest = 1
 INFO: [USF-XSim-96] XSim completed. Design snapshot 'fsic_tb_behav' loaded.
 INFO: [USF-XSim-97] XSim simulation ran for 1000ns
-launch_simulation: Time (s): cpu = 00:01:26 ; elapsed = 00:00:31 . Memory (MB): peak = 3275.316 ; gain = 293.363 ; free physical = 8178 ; free virtual = 11116
+launch_simulation: Time (s): cpu = 00:01:25 ; elapsed = 00:00:31 . Memory (MB): peak = 3275.312 ; gain = 293.363 ; free physical = 7415 ; free virtual = 11110
 # run all
   3998.000 ns MSG fsic_tb, +1000 cycles, finish_flag=0,  repeat_cnt=0001
   7998.000 ns MSG fsic_tb, +1000 cycles, finish_flag=0,  repeat_cnt=0002
@@ -32829,10 +32828,10 @@ Executing Axi4 End Of Simulation checks
 Executing Axi4 End Of Simulation checks
 Executing Axi4 End Of Simulation checks
 $finish called at time : 121569058 ns : File "/ADATA2T/home/tonyho/workspace/test/fsic_fpga/vivado/fsic_tb.sv" Line 132
-run: Time (s): cpu = 00:01:58 ; elapsed = 00:11:16 . Memory (MB): peak = 3275.316 ; gain = 0.000 ; free physical = 6133 ; free virtual = 9616
+run: Time (s): cpu = 00:01:57 ; elapsed = 00:11:12 . Memory (MB): peak = 3275.312 ; gain = 0.000 ; free physical = 5321 ; free virtual = 9590
 # exit
-INFO: xsimkernel Simulation Memory Usage: 1606704 KB (Peak: 1655848 KB), Simulation CPU Usage: 676170 ms
-INFO: [Common 17-206] Exiting Vivado at Mon May  6 21:45:54 2024...
+INFO: xsimkernel Simulation Memory Usage: 1606704 KB (Peak: 1655848 KB), Simulation CPU Usage: 671510 ms
+INFO: [Common 17-206] Exiting Vivado at Tue May  7 10:28:00 2024...
 ======================================================================
                            vivado complete 
 ======================================================================

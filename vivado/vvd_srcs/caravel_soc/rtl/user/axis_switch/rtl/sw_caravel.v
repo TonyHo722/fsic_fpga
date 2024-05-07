@@ -241,7 +241,7 @@ assign  as_is_tdata     = m_axis_tdata_reg;
 assign  as_is_tstrb     = m_axis_tstrb_reg;
 assign  as_is_tkeep     = m_axis_tkeep_reg; 
 assign  as_is_tlast     = m_axis_tlast_reg;        
-assign  as_is_tvalid    = m_axis_tvalid_reg;
+assign  as_is_tvalid    = is_as_tready_reg? m_axis_tvalid_reg : 1'b0;
 assign  as_is_tuser     = m_axis_tuser_reg;   
 assign  as_is_tid       = m_axis_tid_reg;
 assign as_up_tready = grant_reg[0] && is_as_tready;    
@@ -471,4 +471,16 @@ assign as_aa_tstrb = (m_axis[TID_OFFSET +: TID_WIDTH]==2'b01) ? m_axis[STRB_OFFS
 assign as_aa_tkeep = (m_axis[TID_OFFSET +: TID_WIDTH]==2'b01) ? m_axis[KEEP_OFFSET +: pDATA_WIDTH/8]: 0;
 assign as_aa_tlast = (m_axis[TID_OFFSET +: TID_WIDTH]==2'b01) ? m_axis[LAST_OFFSET]: 0;
 assign as_aa_tuser = (m_axis[TID_OFFSET +: TID_WIDTH]==2'b01) ? m_axis[USER_OFFSET +: USER_WIDTH]: 0;
+
+
+reg is_as_tready_reg;
+
+always @(posedge axis_clk or negedge axi_reset_n) begin
+    if (!axi_reset_n) begin
+        is_as_tready_reg <= 0;
+    end else begin
+        is_as_tready_reg <=  is_as_tready;
+    end
+end
+
 endmodule

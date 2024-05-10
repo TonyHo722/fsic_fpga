@@ -2066,7 +2066,7 @@ Compiling module xil_defaultlib.design_1_wrapper
 Compiling module xil_defaultlib.fsic_tb
 Compiling module xil_defaultlib.glbl
 Built simulation snapshot fsic_tb_behav
-execute_script: Time (s): cpu = 00:01:10 ; elapsed = 00:00:17 . Memory (MB): peak = 3166.043 ; gain = 0.000 ; free physical = 17964 ; free virtual = 59045
+execute_script: Time (s): cpu = 00:01:11 ; elapsed = 00:00:17 . Memory (MB): peak = 3166.039 ; gain = 0.000 ; free physical = 17950 ; free virtual = 59049
 INFO: [USF-XSim-69] 'elaborate' step finished in '17' seconds
 INFO: [USF-XSim-4] XSim::Simulate design
 INFO: [USF-XSim-61] Executing 'SIMULATE' step in '/ADATA2T/home/tonyho/workspace/test/fsic_fpga_0509/vivado/vvd_caravel_fpga_sim/vvd_caravel_fpga_sim.sim/sim_1/behav/xsim'
@@ -2177,7 +2177,7 @@ Block Memory Generator module fsic_tb.DUT.design_1_i.blk_mem_gen_0.inst.\native_
                  200=> sys_rest = 1
 INFO: [USF-XSim-96] XSim completed. Design snapshot 'fsic_tb_behav' loaded.
 INFO: [USF-XSim-97] XSim simulation ran for 1000ns
-launch_simulation: Time (s): cpu = 00:01:26 ; elapsed = 00:00:32 . Memory (MB): peak = 3275.316 ; gain = 293.363 ; free physical = 17599 ; free virtual = 58694
+launch_simulation: Time (s): cpu = 00:01:26 ; elapsed = 00:00:32 . Memory (MB): peak = 3275.312 ; gain = 293.363 ; free physical = 17586 ; free virtual = 58699
 # run all
                28858=> rst_clk_wiz_0_5M_peripheral_aresetn = 1
               228858=> CaravelSoC resetb_0 = 1
@@ -2748,10 +2748,10 @@ Executing Axi4 End Of Simulation checks
 Executing Axi4 End Of Simulation checks
 Executing Axi4 End Of Simulation checks
 $finish called at time : 121569058 ns : File "/ADATA2T/home/tonyho/workspace/test/fsic_fpga_0509/vivado/fsic_tb.sv" Line 136
-run: Time (s): cpu = 00:12:46 ; elapsed = 00:13:52 . Memory (MB): peak = 3275.316 ; gain = 0.000 ; free physical = 8255 ; free virtual = 57059
+run: Time (s): cpu = 00:12:46 ; elapsed = 00:14:02 . Memory (MB): peak = 3275.312 ; gain = 0.000 ; free physical = 8232 ; free virtual = 57061
 # exit
-INFO: xsimkernel Simulation Memory Usage: 1607216 KB (Peak: 1656360 KB), Simulation CPU Usage: 831650 ms
-INFO: [Common 17-206] Exiting Vivado at Fri May 10 19:20:19 2024...
+INFO: xsimkernel Simulation Memory Usage: 1607216 KB (Peak: 1656360 KB), Simulation CPU Usage: 841580 ms
+INFO: [Common 17-206] Exiting Vivado at Fri May 10 19:48:09 2024...
 ======================================================================
                            vivado complete 
 ======================================================================

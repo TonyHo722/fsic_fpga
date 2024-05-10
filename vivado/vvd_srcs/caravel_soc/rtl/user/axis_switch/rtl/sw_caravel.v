@@ -191,19 +191,52 @@ wire [TID_WIDTH-1:0]         m_axis_tid;
 //assign m_axis_tdata = ({32{(grant_reg == 3'b001)}} & up_as_tdata) | 
 //                      ({32{(grant_reg == 3'b010)}} & aa_as_tdata) | 
 //                      ({32{(grant_reg == 3'b100)}} & la_as_tdata);
-assign m_axis_tdata = ({pDATA_WIDTH{(grant_reg == 3'b001)}} & up_as_tdata) |
-                      ({pDATA_WIDTH{(grant_reg == 3'b010)}} & aa_as_tdata) |
-                      ({pDATA_WIDTH{(grant_reg == 3'b100)}} & la_as_tdata);
-
-
-`ifdef USER_PROJECT_SIDEBAND_SUPPORT
-	assign m_axis_tupsb = ({pUSER_PROJECT_SIDEBAND_WIDTH{(grant_reg == 3'b001)}} & up_as_tupsb);
-`endif
 //`ifdef USER_PROJECT_SIDEBAND_SUPPORT
 //	assign m_axis_tupsb = ({5{(grant_reg == 3'b001)}} & up_as_tupsb) | \
 //                        ({5{(grant_reg == 3'b010)}} & aa_as_tupsb) | \
 //                        ({5{(grant_reg == 3'b100)}} & la_as_tupsb);
 //`endif //USER_PROJECT_SIDEBAND_SUPPORT
+
+//assign m_axis_tdata = ({pDATA_WIDTH{(grant_reg == 3'b001)}} & up_as_tdata) |
+//                      ({pDATA_WIDTH{(grant_reg == 3'b010)}} & aa_as_tdata) |
+//                      ({pDATA_WIDTH{(grant_reg == 3'b100)}} & la_as_tdata);
+//
+//
+//`ifdef USER_PROJECT_SIDEBAND_SUPPORT
+//	assign m_axis_tupsb = ({pUSER_PROJECT_SIDEBAND_WIDTH{(grant_reg == 3'b001)}} & up_as_tupsb);
+//`endif
+assign m_axis_tdata = ({pDATA_WIDTH{(grant_reg == 3'b001)}} & up_as_tdata) |
+                      ({pDATA_WIDTH{(grant_reg == 3'b010)}} & aa_as_tdata) |
+                      ({pDATA_WIDTH{(grant_reg == 3'b100)}} & la_as_tdata);
+
+`ifdef USER_PROJECT_SIDEBAND_SUPPORT
+	assign m_axis_tupsb = ({pUSER_PROJECT_SIDEBAND_WIDTH{(grant_reg == 3'b001)}} & up_as_tupsb);
+`endif //USER_PROJECT_SIDEBAND_SUPPORT
+
+assign m_axis_tstrb = ({pDATA_WIDTH/8{(grant_reg == 3'b001)}} & up_as_tstrb) |
+                      ({pDATA_WIDTH/8{(grant_reg == 3'b010)}} & aa_as_tstrb) |
+                      ({pDATA_WIDTH/8{(grant_reg == 3'b100)}} & la_as_tstrb);
+
+
+assign m_axis_tkeep = ({pDATA_WIDTH/8{(grant_reg == 3'b001)}} & up_as_tkeep) |
+                      ({pDATA_WIDTH/8{(grant_reg == 3'b010)}} & aa_as_tkeep) |
+                      ({pDATA_WIDTH/8{(grant_reg == 3'b100)}} & la_as_tkeep);
+
+
+assign m_axis_tlast = ( (grant_reg == 3'b001) &  ((up_hpri_req || hi_req_flag[0]) & (!last_support[0])) & (!up_hpri_req && hi_req_flag[0]) ) |
+                      ( (grant_reg == 3'b001) & !((up_hpri_req || hi_req_flag[0]) & (!last_support[0])) & up_as_tlast ) |
+                      ( (grant_reg == 3'b010) & aa_as_tlast ) |
+                      ( (grant_reg == 3'b100) &  ((la_hpri_req || hi_req_flag[2]) & (!last_support[2])) & (!la_hpri_req && hi_req_flag[2]) ) |
+                      ( (grant_reg == 3'b100) & !((la_hpri_req || hi_req_flag[2]) & (!last_support[2])) & la_as_tlast );
+
+assign m_axis_tvalid =  ( (grant_reg == 3'b001) & up_as_tvalid ) |
+                        ( (grant_reg == 3'b010) & aa_as_tvalid ) |
+                        ( (grant_reg == 3'b100) & la_as_tvalid );
+
+
+assign m_axis_tuser = ( (grant_reg == 3'b001) & up_as_tuser ) |
+                      ( (grant_reg == 3'b010) & aa_as_tuser ) |
+                      ( (grant_reg == 3'b100) & la_as_tuser );
 
 
 

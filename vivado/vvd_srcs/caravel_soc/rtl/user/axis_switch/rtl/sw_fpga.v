@@ -172,16 +172,85 @@ reg  [$clog2(N)-1:0]        base_ptr;
 reg  [N-1:0]                grant_reg = 3'b000, grant_next, shift_grant = 3'b000, shift_hi_grant= 3'b000;
 reg                         frame_start_reg = 1'b0, frame_start_next;   
 reg [N-1:0]                 hi_req_flag;
-reg [pDATA_WIDTH-1:0]       m_axis_tdata_reg;
+
+//reg [pDATA_WIDTH-1:0]       m_axis_tdata_reg;
 `ifdef USER_PROJECT_SIDEBAND_SUPPORT
-	reg [pUSER_PROJECT_SIDEBAND_WIDTH-1:0]     m_axis_tupsb_reg;
+	//reg [pUSER_PROJECT_SIDEBAND_WIDTH-1:0]     m_axis_tupsb_reg;
 `endif
-reg [pDATA_WIDTH/8-1:0]     m_axis_tstrb_reg;
-reg [pDATA_WIDTH/8-1:0]     m_axis_tkeep_reg; 
+//reg [pDATA_WIDTH/8-1:0]     m_axis_tstrb_reg;
+//reg [pDATA_WIDTH/8-1:0]     m_axis_tkeep_reg; 
 reg                         m_axis_tlast_reg;        
-reg                         m_axis_tvalid_reg = 1'b0;
-reg [USER_WIDTH-1:0]        m_axis_tuser_reg;     
-reg [TID_WIDTH-1:0]         m_axis_tid_reg;
+//reg                         m_axis_tvalid_reg = 1'b0;
+//reg [USER_WIDTH-1:0]        m_axis_tuser_reg;     
+//reg [TID_WIDTH-1:0]         m_axis_tid_reg;
+
+//Tony
+wire [pDATA_WIDTH-1:0]       m_axis_tdata;
+`ifdef USER_PROJECT_SIDEBAND_SUPPORT
+	wire [pUSER_PROJECT_SIDEBAND_WIDTH-1:0]     m_axis_tupsb;
+`endif
+wire [pDATA_WIDTH/8-1:0]     m_axis_tstrb;
+wire [pDATA_WIDTH/8-1:0]     m_axis_tkeep; 
+wire                         m_axis_tlast;        
+wire                         m_axis_tvalid;
+wire [USER_WIDTH-1:0]        m_axis_tuser;     
+wire [TID_WIDTH-1:0]         m_axis_tid;
+
+//assign m_axis_tdata = ({32{(grant_reg == 3'b001)}} & up_as_tdata) | ({32{(grant_reg == 3'b010)}} & aa_as_tdata) | ({32{(grant_reg == 3'b100)}} & la_as_tdata);
+//assign m_axis_tdata = ({32{(grant_reg == 3'b001)}} & up_as_tdata) | 
+//                      ({32{(grant_reg == 3'b010)}} & aa_as_tdata) | 
+//                      ({32{(grant_reg == 3'b100)}} & la_as_tdata);
+//`ifdef USER_PROJECT_SIDEBAND_SUPPORT
+//	assign m_axis_tupsb = ({5{(grant_reg == 3'b001)}} & up_as_tupsb) | \
+//                        ({5{(grant_reg == 3'b010)}} & aa_as_tupsb) | \
+//                        ({5{(grant_reg == 3'b100)}} & la_as_tupsb);
+//`endif //USER_PROJECT_SIDEBAND_SUPPORT
+
+//assign m_axis_tdata = ({pDATA_WIDTH{(grant_reg == 3'b001)}} & up_as_tdata) |
+//                      ({pDATA_WIDTH{(grant_reg == 3'b010)}} & aa_as_tdata) |
+//                      ({pDATA_WIDTH{(grant_reg == 3'b100)}} & la_as_tdata);
+//
+//
+//`ifdef USER_PROJECT_SIDEBAND_SUPPORT
+//	assign m_axis_tupsb = ({pUSER_PROJECT_SIDEBAND_WIDTH{(grant_reg == 3'b001)}} & up_as_tupsb);
+//`endif
+assign m_axis_tdata = ({pDATA_WIDTH{(grant_reg == 3'b001)}} & up_as_tdata) |
+                      ({pDATA_WIDTH{(grant_reg == 3'b010)}} & aa_as_tdata) |
+                      ({pDATA_WIDTH{(grant_reg == 3'b100)}} & la_as_tdata);
+
+`ifdef USER_PROJECT_SIDEBAND_SUPPORT
+	assign m_axis_tupsb = ({pUSER_PROJECT_SIDEBAND_WIDTH{(grant_reg == 3'b001)}} & up_as_tupsb);
+`endif //USER_PROJECT_SIDEBAND_SUPPORT
+
+assign m_axis_tstrb = ({pDATA_WIDTH/8{(grant_reg == 3'b001)}} & up_as_tstrb) |
+                      ({pDATA_WIDTH/8{(grant_reg == 3'b010)}} & aa_as_tstrb) |
+                      ({pDATA_WIDTH/8{(grant_reg == 3'b100)}} & la_as_tstrb);
+
+
+assign m_axis_tkeep = ({pDATA_WIDTH/8{(grant_reg == 3'b001)}} & up_as_tkeep) |
+                      ({pDATA_WIDTH/8{(grant_reg == 3'b010)}} & aa_as_tkeep) |
+                      ({pDATA_WIDTH/8{(grant_reg == 3'b100)}} & la_as_tkeep);
+
+
+assign m_axis_tlast = ( (grant_reg == 3'b001) &  ((up_hpri_req || hi_req_flag[0]) & (!last_support[0])) & (!up_hpri_req && hi_req_flag[0]) ) |
+                      ( (grant_reg == 3'b001) & !((up_hpri_req || hi_req_flag[0]) & (!last_support[0])) & up_as_tlast ) |
+                      ( (grant_reg == 3'b010) & aa_as_tlast ) |
+                      ( (grant_reg == 3'b100) &  ((la_hpri_req || hi_req_flag[2]) & (!last_support[2])) & (!la_hpri_req && hi_req_flag[2]) ) |
+                      ( (grant_reg == 3'b100) & !((la_hpri_req || hi_req_flag[2]) & (!last_support[2])) & la_as_tlast );
+
+assign m_axis_tvalid =  ( (grant_reg == 3'b001) & up_as_tvalid ) |
+                        ( (grant_reg == 3'b010) & aa_as_tvalid ) |
+                        ( (grant_reg == 3'b100) & la_as_tvalid );
+
+
+assign m_axis_tuser = ( (grant_reg == 3'b001) & up_as_tuser ) |
+                      ( (grant_reg == 3'b010) & aa_as_tuser ) |
+                      ( (grant_reg == 3'b100) & la_as_tuser );
+
+assign m_axis_tid =  (grant_reg == 3'b010) ? 2'b01 : ( (grant_reg == 3'b100) ? 2'b10 : 2'b00 );
+
+
+
 //for Demux
 //FIFO control pointer
 reg [ADDR_WIDTH:0] wr_ptr_reg = {ADDR_WIDTH+1{1'b0}};
@@ -248,16 +317,24 @@ assign  req[2] = la_as_tvalid & req_mask[2];
 assign  hi_req[0] = up_hpri_req & hi_req_mask[0];
 assign  hi_req[1] = hi_req_mask[1];
 assign  hi_req[2] = la_hpri_req & hi_req_mask[2];
-assign  as_is_tdata     = m_axis_tdata_reg;
+//assign  as_is_tdata     = m_axis_tdata_reg;
+assign  as_is_tdata     = m_axis_tdata;
 `ifdef USER_PROJECT_SIDEBAND_SUPPORT
-	assign  as_is_tupsb     = m_axis_tupsb_reg;
+	//assign  as_is_tupsb     = m_axis_tupsb_reg;
+	assign  as_is_tupsb     = m_axis_tupsb;
 `endif
-assign  as_is_tstrb     = m_axis_tstrb_reg;
-assign  as_is_tkeep     = m_axis_tkeep_reg; 
-assign  as_is_tlast     = m_axis_tlast_reg;        
-assign  as_is_tvalid    = m_axis_tvalid_reg;
-assign  as_is_tuser     = m_axis_tuser_reg;   
-assign  as_is_tid       = m_axis_tid_reg;
+//assign  as_is_tstrb     = m_axis_tstrb_reg;
+assign  as_is_tstrb     = m_axis_tstrb;
+//assign  as_is_tkeep     = m_axis_tkeep_reg; 
+assign  as_is_tkeep     = m_axis_tkeep;
+//assign  as_is_tlast     = m_axis_tlast_reg;        
+assign  as_is_tlast     = m_axis_tlast;
+//assign  as_is_tvalid    = m_axis_tvalid_reg;
+assign  as_is_tvalid    = m_axis_tvalid;
+//assign  as_is_tuser     = m_axis_tuser_reg;   
+assign  as_is_tuser     = m_axis_tuser;
+//assign  as_is_tid       = m_axis_tid_reg;
+assign  as_is_tid       = m_axis_tid;
 assign as_up_tready = grant_reg[0] && is_as_tready;    
 assign as_aa_tready = grant_reg[1] && is_as_tready;
 assign as_la_tready = grant_reg[2] && is_as_tready;    
@@ -335,16 +412,16 @@ always @(posedge axis_clk or negedge axi_reset_n) begin
         hi_req_flag <= {(N){1'b0}}; 
         grant_reg <= 0;
         frame_start_reg <= 0;   
-        m_axis_tdata_reg <= 0;
+        //m_axis_tdata_reg <= 0;
 `ifdef USER_PROJECT_SIDEBAND_SUPPORT
-		m_axis_tupsb_reg <= 0;
+		//m_axis_tupsb_reg <= 0;
 `endif
-        m_axis_tstrb_reg <= 0;
-        m_axis_tkeep_reg <= 0;
+        //m_axis_tstrb_reg <= 0;
+        //m_axis_tkeep_reg <= 0;
         m_axis_tlast_reg <= 0;
-        m_axis_tvalid_reg <= 0;
-        m_axis_tuser_reg <= 0;
-        m_axis_tid_reg <= 2'b00;             
+        //m_axis_tvalid_reg <= 0;
+        //m_axis_tuser_reg <= 0;
+        //m_axis_tid_reg <= 2'b00;             
     end else begin
         grant_reg <= grant_next;
         frame_start_reg <= frame_start_next;
@@ -361,12 +438,12 @@ always @(posedge axis_clk or negedge axi_reset_n) begin
         end
        case (grant_reg)
             3'b001: begin
-                m_axis_tdata_reg <= up_as_tdata;
+                //m_axis_tdata_reg <= up_as_tdata;
 				`ifdef USER_PROJECT_SIDEBAND_SUPPORT
-					m_axis_tupsb_reg <= up_as_tupsb;
+					//m_axis_tupsb_reg <= up_as_tupsb;
 				`endif
-                m_axis_tstrb_reg <= up_as_tstrb;
-                m_axis_tkeep_reg <= up_as_tkeep;
+                //m_axis_tstrb_reg <= up_as_tstrb;
+                //m_axis_tkeep_reg <= up_as_tkeep;
                 if((up_hpri_req || hi_req_flag[0]) && (!last_support[0])) begin 
                     if(up_hpri_req && !hi_req_flag[0]) begin
                         hi_req_flag[0] <= 1;
@@ -382,23 +459,23 @@ always @(posedge axis_clk or negedge axi_reset_n) begin
                 //for  normal req
                     m_axis_tlast_reg <= up_as_tlast;
                 end 
-                m_axis_tvalid_reg <= up_as_tvalid; 
-                m_axis_tuser_reg <= up_as_tuser;
-                m_axis_tid_reg <= 2'b00;        
+                //m_axis_tvalid_reg <= up_as_tvalid; 
+                //m_axis_tuser_reg <= up_as_tuser;
+                //m_axis_tid_reg <= 2'b00;        
             end
             3'b010: begin
-                m_axis_tdata_reg <= aa_as_tdata;
-                m_axis_tstrb_reg <= aa_as_tstrb;
-                m_axis_tkeep_reg <= aa_as_tkeep;
+                //m_axis_tdata_reg <= aa_as_tdata;
+                //m_axis_tstrb_reg <= aa_as_tstrb;
+                //m_axis_tkeep_reg <= aa_as_tkeep;
                 m_axis_tlast_reg <= aa_as_tlast;
-                m_axis_tvalid_reg <= aa_as_tvalid;   
-                m_axis_tuser_reg <= aa_as_tuser;
-                m_axis_tid_reg <= 2'b01;               
+                //m_axis_tvalid_reg <= aa_as_tvalid;   
+                //m_axis_tuser_reg <= aa_as_tuser;
+                //m_axis_tid_reg <= 2'b01;               
             end
             3'b100: begin
-                m_axis_tdata_reg <= la_as_tdata;
-                m_axis_tstrb_reg <= la_as_tstrb;
-                m_axis_tkeep_reg <= la_as_tkeep;
+                //m_axis_tdata_reg <= la_as_tdata;
+                //m_axis_tstrb_reg <= la_as_tstrb;
+                //m_axis_tkeep_reg <= la_as_tkeep;
                 if((la_hpri_req || hi_req_flag[2]) && (!last_support[2])) begin            
                     if(la_hpri_req && !hi_req_flag[2]) begin    
                         hi_req_flag[2] <= 1;
@@ -414,21 +491,21 @@ always @(posedge axis_clk or negedge axi_reset_n) begin
                 //for  normal req
                     m_axis_tlast_reg <= la_as_tlast;
                 end                
-                m_axis_tvalid_reg <= la_as_tvalid; 
-                m_axis_tuser_reg <= la_as_tuser;
-                m_axis_tid_reg <= 2'b10;                
+                //m_axis_tvalid_reg <= la_as_tvalid; 
+                //m_axis_tuser_reg <= la_as_tuser;
+                //m_axis_tid_reg <= 2'b10;                
             end
             default: begin
-                m_axis_tdata_reg <= 0;
+                //m_axis_tdata_reg <= 0;
 				`ifdef USER_PROJECT_SIDEBAND_SUPPORT
-					m_axis_tupsb_reg <= 0;
+					//m_axis_tupsb_reg <= 0;
 				`endif
-                m_axis_tstrb_reg <= 0;
-                m_axis_tkeep_reg <= 0;
+                //m_axis_tstrb_reg <= 0;
+                //m_axis_tkeep_reg <= 0;
                 m_axis_tlast_reg <= 0;
-                m_axis_tvalid_reg <= 0;
-                m_axis_tuser_reg <= 0;
-                m_axis_tid_reg <= 2'b00;            
+                //m_axis_tvalid_reg <= 0;
+                //m_axis_tuser_reg <= 0;
+                //m_axis_tid_reg <= 2'b00;            
             end
         endcase     
     end

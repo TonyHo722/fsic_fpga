@@ -223,11 +223,18 @@ assign m_axis_tkeep = ({pDATA_WIDTH/8{(grant_reg == 3'b001)}} & up_as_tkeep) |
                       ({pDATA_WIDTH/8{(grant_reg == 3'b100)}} & la_as_tkeep);
 
 
-assign m_axis_tlast = ( (grant_reg == 3'b001) &  ((up_hpri_req || hi_req_flag[0]) & (!last_support[0])) & (!up_hpri_req && hi_req_flag[0]) ) |
+//assign m_axis_tlast = ( (grant_reg == 3'b001) &  ((up_hpri_req || hi_req_flag[0]) & (!last_support[0])) & (!up_hpri_req && hi_req_flag[0]) ) |
+//                      ( (grant_reg == 3'b001) & !((up_hpri_req || hi_req_flag[0]) & (!last_support[0])) & up_as_tlast ) |
+//                      ( (grant_reg == 3'b010) & aa_as_tlast ) |
+//                      ( (grant_reg == 3'b100) &  ((la_hpri_req || hi_req_flag[2]) & (!last_support[2])) & (!la_hpri_req && hi_req_flag[2]) ) |
+//                      ( (grant_reg == 3'b100) & !((la_hpri_req || hi_req_flag[2]) & (!last_support[2])) & la_as_tlast );
+
+assign m_axis_tlast = ( (grant_reg == 3'b001) &  ((!up_hpri_req && hi_req_flag[0]) & (!last_support[0])) ) |
                       ( (grant_reg == 3'b001) & !((up_hpri_req || hi_req_flag[0]) & (!last_support[0])) & up_as_tlast ) |
                       ( (grant_reg == 3'b010) & aa_as_tlast ) |
-                      ( (grant_reg == 3'b100) &  ((la_hpri_req || hi_req_flag[2]) & (!last_support[2])) & (!la_hpri_req && hi_req_flag[2]) ) |
+                      ( (grant_reg == 3'b100) &  ((!la_hpri_req && hi_req_flag[2]) & (!last_support[2])) ) |
                       ( (grant_reg == 3'b100) & !((la_hpri_req || hi_req_flag[2]) & (!last_support[2])) & la_as_tlast );
+                      
 
 assign m_axis_tvalid =  ( (grant_reg == 3'b001) & up_as_tvalid ) |
                         ( (grant_reg == 3'b010) & aa_as_tvalid ) |

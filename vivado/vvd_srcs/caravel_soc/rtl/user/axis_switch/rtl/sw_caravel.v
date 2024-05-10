@@ -163,6 +163,7 @@ reg  [$clog2(N)-1:0]        base_ptr;
 reg  [N-1:0]                grant_reg = 3'b000, grant_next, shift_grant = 3'b000, shift_hi_grant= 3'b000;
 reg                         frame_start_reg = 1'b0, frame_start_next;   
 reg [N-1:0]                 hi_req_flag;
+
 reg [pDATA_WIDTH-1:0]       m_axis_tdata_reg;
 `ifdef USER_PROJECT_SIDEBAND_SUPPORT
 	reg [pUSER_PROJECT_SIDEBAND_WIDTH-1:0]     m_axis_tupsb_reg;
@@ -173,6 +174,39 @@ reg                         m_axis_tlast_reg;
 reg                         m_axis_tvalid_reg = 1'b0;
 reg [USER_WIDTH-1:0]        m_axis_tuser_reg;     
 reg [TID_WIDTH-1:0]         m_axis_tid_reg;
+
+//Tony
+wire [pDATA_WIDTH-1:0]       m_axis_tdata;
+`ifdef USER_PROJECT_SIDEBAND_SUPPORT
+	wire [pUSER_PROJECT_SIDEBAND_WIDTH-1:0]     m_axis_tupsb;
+`endif
+wire [pDATA_WIDTH/8-1:0]     m_axis_tstrb;
+wire [pDATA_WIDTH/8-1:0]     m_axis_tkeep; 
+wire                         m_axis_tlast;        
+wire                         m_axis_tvalid = 1'b0;
+wire [USER_WIDTH-1:0]        m_axis_tuser;     
+wire [TID_WIDTH-1:0]         m_axis_tid;
+
+//assign m_axis_tdata = ({32{(grant_reg == 3'b001)}} & up_as_tdata) | ({32{(grant_reg == 3'b010)}} & aa_as_tdata) | ({32{(grant_reg == 3'b100)}} & la_as_tdata);
+//assign m_axis_tdata = ({32{(grant_reg == 3'b001)}} & up_as_tdata) | 
+//                      ({32{(grant_reg == 3'b010)}} & aa_as_tdata) | 
+//                      ({32{(grant_reg == 3'b100)}} & la_as_tdata);
+assign m_axis_tdata = ({pDATA_WIDTH{(grant_reg == 3'b001)}} & up_as_tdata) |
+                      ({pDATA_WIDTH{(grant_reg == 3'b010)}} & aa_as_tdata) |
+                      ({pDATA_WIDTH{(grant_reg == 3'b100)}} & la_as_tdata);
+
+
+`ifdef USER_PROJECT_SIDEBAND_SUPPORT
+	assign m_axis_tupsb = ({pUSER_PROJECT_SIDEBAND_WIDTH{(grant_reg == 3'b001)}} & up_as_tupsb);
+`endif
+//`ifdef USER_PROJECT_SIDEBAND_SUPPORT
+//	assign m_axis_tupsb = ({5{(grant_reg == 3'b001)}} & up_as_tupsb) | \
+//                        ({5{(grant_reg == 3'b010)}} & aa_as_tupsb) | \
+//                        ({5{(grant_reg == 3'b100)}} & la_as_tupsb);
+//`endif //USER_PROJECT_SIDEBAND_SUPPORT
+
+
+
 //for Demux
 //FIFO control pointer
 reg [ADDR_WIDTH:0] wr_ptr_reg = {ADDR_WIDTH+1{1'b0}};

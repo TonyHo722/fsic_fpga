@@ -243,9 +243,13 @@ assign m_axis_tvalid =  ( (grant_reg == 3'b001) & up_as_tvalid ) |
                         ( (grant_reg == 3'b100) & la_as_tvalid );
 
 
-assign m_axis_tuser = ( (grant_reg == 3'b001) & up_as_tuser ) |
-                      ( (grant_reg == 3'b010) & aa_as_tuser ) |
-                      ( (grant_reg == 3'b100) & la_as_tuser );
+//assign m_axis_tuser = ( (grant_reg == 3'b001) & up_as_tuser ) |
+//                      ( (grant_reg == 3'b010) & aa_as_tuser ) |
+//                      ( (grant_reg == 3'b100) & la_as_tuser );
+assign m_axis_tuser = ({USER_WIDTH{(grant_reg == 3'b001)}} & up_as_tuser) |
+                      ({USER_WIDTH{(grant_reg == 3'b010)}} & aa_as_tuser) |
+                      ({USER_WIDTH{(grant_reg == 3'b100)}} & la_as_tuser);
+
 
 assign m_axis_tid =  (grant_reg == 3'b010) ? 2'b01 : ( (grant_reg == 3'b100) ? 2'b10 : 2'b00 );
 
